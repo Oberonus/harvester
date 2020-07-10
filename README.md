@@ -100,6 +100,26 @@ The above snippet set's up a `Harvester` instance with consul seed and monitor.
 
 Consul has support for versioning (`ModifyIndex`) which allows us to change the value only if the version is higher than the one currently.
 
+## Listening for changes
+
+It is possible to listen for changes on a field basis at a realtime. 
+For this all `sync` package types has `Listen(chan)` function. 
+On every update of the field new value will be sent to the provided channel.
+
+```golang
+    ch := make(chan string, 1)
+    Config.LogLevel.Listen(ch)
+    // ...
+    select{
+        switch ll := <-ch {
+            // ll has a new value of Config.LogLevel
+        }
+    }
+```
+
+Please note that multiple subscribers for one single field is not supported and should be handled on
+a client application level if needed.
+
 ## Examples
 
 Head over to [examples](examples) readme on how to use harvester

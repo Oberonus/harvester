@@ -9,6 +9,7 @@ import (
 // Bool type with concurrent access support.
 type Bool struct {
 	rw    sync.RWMutex
+	ch    chan<- bool
 	value bool
 }
 
@@ -24,6 +25,9 @@ func (b *Bool) Set(value bool) {
 	b.rw.Lock()
 	defer b.rw.Unlock()
 	b.value = value
+	if b.ch != nil {
+		b.ch <- value
+	}
 }
 
 // String returns string representation of value.
@@ -46,9 +50,17 @@ func (b *Bool) SetString(val string) error {
 	return nil
 }
 
+// Listen sets a channel for value changes notifications.
+func (b *Bool) Listen(ch chan<- bool) {
+	b.rw.Lock()
+	defer b.rw.Unlock()
+	b.ch = ch
+}
+
 // Int64 type with concurrent access support.
 type Int64 struct {
 	rw    sync.RWMutex
+	ch    chan<- int64
 	value int64
 }
 
@@ -64,6 +76,9 @@ func (i *Int64) Set(value int64) {
 	i.rw.Lock()
 	defer i.rw.Unlock()
 	i.value = value
+	if i.ch != nil {
+		i.ch <- value
+	}
 }
 
 // String returns string representation of value.
@@ -83,9 +98,17 @@ func (i *Int64) SetString(val string) error {
 	return nil
 }
 
+// Listen sets a channel for value changes notifications.
+func (i *Int64) Listen(ch chan<- int64) {
+	i.rw.Lock()
+	defer i.rw.Unlock()
+	i.ch = ch
+}
+
 // Float64 type with concurrent access support.
 type Float64 struct {
 	rw    sync.RWMutex
+	ch    chan<- float64
 	value float64
 }
 
@@ -101,6 +124,9 @@ func (f *Float64) Set(value float64) {
 	f.rw.Lock()
 	defer f.rw.Unlock()
 	f.value = value
+	if f.ch != nil {
+		f.ch <- value
+	}
 }
 
 // String returns string representation of value.
@@ -120,9 +146,17 @@ func (f *Float64) SetString(val string) error {
 	return nil
 }
 
+// Listen sets a channel for value changes notifications.
+func (f *Float64) Listen(ch chan<- float64) {
+	f.rw.Lock()
+	defer f.rw.Unlock()
+	f.ch = ch
+}
+
 // String type with concurrent access support.
 type String struct {
 	rw    sync.RWMutex
+	ch    chan<- string
 	value string
 }
 
@@ -138,6 +172,9 @@ func (s *String) Set(value string) {
 	s.rw.Lock()
 	defer s.rw.Unlock()
 	s.value = value
+	if s.ch != nil {
+		s.ch <- value
+	}
 }
 
 // String returns string representation of value.
@@ -153,9 +190,17 @@ func (s *String) SetString(val string) error {
 	return nil
 }
 
+// Listen sets a channel for value changes notifications.
+func (s *String) Listen(ch chan<- string) {
+	s.rw.Lock()
+	defer s.rw.Unlock()
+	s.ch = ch
+}
+
 // Secret string type for secrets with concurrent access support.
 type Secret struct {
 	rw    sync.RWMutex
+	ch    chan<- string
 	value string
 }
 
@@ -171,6 +216,9 @@ func (s *Secret) Set(value string) {
 	s.rw.Lock()
 	defer s.rw.Unlock()
 	s.value = value
+	if s.ch != nil {
+		s.ch <- value
+	}
 }
 
 // String returns obfuscated string representation of value.
@@ -182,4 +230,11 @@ func (s *Secret) String() string {
 func (s *Secret) SetString(val string) error {
 	s.Set(val)
 	return nil
+}
+
+// Listen sets a channel for value changes notifications.
+func (s *Secret) Listen(ch chan<- string) {
+	s.rw.Lock()
+	defer s.rw.Unlock()
+	s.ch = ch
 }

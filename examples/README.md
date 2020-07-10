@@ -100,3 +100,21 @@ A fast way to get consul is the following:
     2020/01/21 13:39:34 INFO: field EMail updated with value bar@example.com, version: 0
     2020/01/21 13:39:34 INFO: env var value bar@example.com applied on field EMail
     2020/01/21 13:39:34 Config : IndexName: customers-v1, EMail: bar@example.com, EMail.Name: bar, EMail.Domain: example.com
+
+## 06 Listening for dynamically changing values
+
+    go run examples/06_listening/main.go
+
+    2020/07/11 00:53:56 INFO: field IndexName updated with value customers-v1, version: 0
+    2020/07/11 00:53:56 INFO: seed value customers-v1 applied on field IndexName
+    2020/07/11 00:53:56 INFO: field CacheRetention updated with value 43200, version: 0
+    2020/07/11 00:53:56 INFO: seed value 43200 applied on field CacheRetention
+    2020/07/11 00:53:56 INFO: field CacheRetention updated with value 86400, version: 0
+    2020/07/11 00:53:56 INFO: env var value 86400 applied on field CacheRetention
+    2020/07/11 00:53:56 INFO: field LogLevel updated with value DEBUG, version: 0
+    2020/07/11 00:53:56 INFO: seed value DEBUG applied on field LogLevel
+    2020/07/11 00:53:56 WARN: flag var loglevel did not exist for field LogLevel
+    2020/07/11 00:53:56 Config : IndexName: customers-v1, CacheRetention: 86400, LogLevel: DEBUG
+    2020/07/11 00:53:56 Config changed. CacheRetention: 43200
+    2020/07/11 00:53:56 Config changed. LogLevel: DEBUG
+    2020/07/11 00:53:56 Config changed. CacheRetention: 86400

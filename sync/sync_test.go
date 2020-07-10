@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBool(t *testing.T) {
@@ -16,6 +17,17 @@ func TestBool(t *testing.T) {
 	<-ch
 	assert.True(t, b.Get())
 	assert.Equal(t, "true", b.String())
+}
+
+func TestBool_Listen(t *testing.T) {
+	var b Bool
+	ch := make(chan bool, 1)
+	b.Listen(ch)
+	b.Set(true)
+	assert.True(t, <-ch)
+	err := b.SetString("false")
+	require.NoError(t, err)
+	assert.False(t, <-ch)
 }
 
 func TestBool_SetString(t *testing.T) {
@@ -44,6 +56,17 @@ func TestInt64_SetString(t *testing.T) {
 	assert.Equal(t, int64(10), i.Get())
 }
 
+func TestInt64_Listen(t *testing.T) {
+	var i Int64
+	ch := make(chan int64, 1)
+	i.Listen(ch)
+	i.Set(30)
+	assert.Equal(t, int64(30), <-ch)
+	err := i.SetString("40")
+	require.NoError(t, err)
+	assert.Equal(t, int64(40), <-ch)
+}
+
 func TestFloat64(t *testing.T) {
 	var f Float64
 	ch := make(chan struct{})
@@ -61,6 +84,17 @@ func TestFloat64_SetString(t *testing.T) {
 	assert.Error(t, f.SetString("wrong"))
 	assert.NoError(t, f.SetString("1.230000"))
 	assert.Equal(t, 1.23, f.Get())
+}
+
+func TestFloat64_Listen(t *testing.T) {
+	var f Float64
+	ch := make(chan float64, 1)
+	f.Listen(ch)
+	f.Set(1.23)
+	assert.Equal(t, 1.23, <-ch)
+	err := f.SetString("2.34")
+	require.NoError(t, err)
+	assert.Equal(t, 2.34, <-ch)
 }
 
 func TestString(t *testing.T) {
@@ -81,6 +115,17 @@ func TestString_SetString(t *testing.T) {
 	assert.Equal(t, "foo", s.Get())
 }
 
+func TestString_Listen(t *testing.T) {
+	var s String
+	ch := make(chan string, 1)
+	s.Listen(ch)
+	s.Set("foo")
+	assert.Equal(t, "foo", <-ch)
+	err := s.SetString("bar")
+	require.NoError(t, err)
+	assert.Equal(t, "bar", <-ch)
+}
+
 func TestSecret(t *testing.T) {
 	var s Secret
 	ch := make(chan struct{})
@@ -97,4 +142,15 @@ func TestSecret_SetString(t *testing.T) {
 	var s Secret
 	assert.NoError(t, s.SetString("foo"))
 	assert.Equal(t, "foo", s.Get())
+}
+
+func TestSecret_Listen(t *testing.T) {
+	var s Secret
+	ch := make(chan string, 1)
+	s.Listen(ch)
+	s.Set("foo")
+	assert.Equal(t, "foo", <-ch)
+	err := s.SetString("bar")
+	require.NoError(t, err)
+	assert.Equal(t, "bar", <-ch)
 }
